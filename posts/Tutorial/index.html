@@ -183,6 +183,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="intro-and-set-up" class="level2">
+<h2 class="anchored" data-anchor-id="intro-and-set-up">Intro and Set Up</h2>
 <p>Hello! Welcome to my Data Visualization Tutorial. For the tutorial, I will be using the Palmer Penguins data set. The url for this data set can be found below.</p>
 <p>The first step is to import pandas and load in the data set.</p>
 <div class="cell" data-execution_count="3">
@@ -190,6 +192,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/pic16b-ucla/24W/main/datasets/palmer_penguins.csv"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>penguins <span class="op">=</span> pd.read_csv(url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="using-head-and-info-functions" class="level2">
+<h2 class="anchored" data-anchor-id="using-head-and-info-functions">Using Head() and Info() Functions</h2>
 <p>Next, we can look at what the data looks like using the head and describe function in pandas.</p>
 <div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>penguins.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -392,6 +397,9 @@ memory usage: 48.1+ KB</code></pre>
 </div>
 </div>
 <p>We can see that two rows got dropped from the dataframe, as the total number of entries is now 342.</p>
+</section>
+<section id="visualization-using-box-plot" class="level2">
+<h2 class="anchored" data-anchor-id="visualization-using-box-plot">Visualization using Box Plot</h2>
 <p>Next, we can use matplotlib to visualize some of the data, using these four columns that we are intersted in.</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#import matplotlib</span></span>
@@ -418,6 +426,9 @@ memory usage: 48.1+ KB</code></pre>
 <p><img src="index_files/figure-html/cell-8-output-4.svg" class="img-fluid"></p>
 </div>
 </div>
+</section>
+<section id="visualization-with-seaborn-and-scatterplots" class="level2">
+<h2 class="anchored" data-anchor-id="visualization-with-seaborn-and-scatterplots">Visualization with Seaborn and Scatterplots</h2>
 <p>We can also use a software seaborn to help with our data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -432,9 +443,13 @@ memory usage: 48.1+ KB</code></pre>
 </div>
 </div>
 <p>As we can see there are a total of 16 plots shown, and when we have a case of the column vs itself, a bar graph is displayed which shows the amount of category. From these charts we can make some insights. For example we can see that there is a relationship between flipper length and body mass. From the scatter plot, we can see that as flipper length increases, so does the body mass.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>Thank you for reading this post!</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
