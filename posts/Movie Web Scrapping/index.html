@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Arvin Hosseini">
+<meta name="dcterms.date" content="2024-02-03">
 
-<title>myblog - Movie Web Scrapping using scrapy</title>
+<title>myblog - Data Visualization and Databases</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -143,14 +145,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Movie Web Scrapping using scrapy</h1>
-                      </div>
+      <h1 class="title">Data Visualization and Databases</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Tutorials</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Arvin Hosseini </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 3, 2024</p>
+      </div>
+    </div>
     
       
     </div>
@@ -166,6 +183,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="movie-web-scrapping-using-scrapy" class="level1">
+<h1>Movie Web Scrapping using scrapy</h1>
 <p>Hello! In this blog post I will go over how to create a web scrapper using scrapy. For the purpose of this post, the goal of our web scrapper is to find all actors from a particular movie and output the list the actors along with all other movies or TV shows they have been in. The website we will be webscrapping is www.themoviedb.org, which is a website that holds movie and TV show information.</p>
 <section id="set-up" class="level2">
 <h2 class="anchored" data-anchor-id="set-up">Set Up</h2>
@@ -489,7 +508,7 @@ Name: count, Length: 1754, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<p>Now we can use plotly to create a bar graph of the some of the most common shared movies or TV shows among the actors in Interstellar. Since there ate 1753 movies or TV shows, we will only pick the top 15 titles to display.</p>
+<p>Now we can use plotly to create a bar graph of the some of the most common shared movies or TV shows among the actors in Interstellar. Since there are 1753 movies or TV shows, we will only pick the top 15 titles to display.</p>
 <div class="cell" data-execution_count="36">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objects <span class="im">as</span> go</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
@@ -510,7 +529,7 @@ Name: count, Length: 1754, dtype: int64</code></pre>
 <iframe scrolling="no" width="100%" height="545px" src="iframe_figures/figure_37.html" frameborder="0" allowfullscreen=""></iframe>
 </div>
 </div>
-<p>As we can see, the top shared movies and shows are displayed in an interactive bar graph format, where if we hover over the bar we can exactly how many shared actors there are. The results are somewhat expected as well. We can see a majority of the shared titles are from late night shows or talk shows. This makes sense, as actors and celebrities often appear on these shows. Since Interstellar has a good amount of famous actors that would appear on these shows.</p>
+<p>As we can see, the top shared movies and shows are displayed in an interactive bar graph format, where if we hover over the bar we can exactly how many shared actors there are. The results are somewhat expected as well. We can see a majority of the shared titles are from late night shows or talk shows. This makes sense, as actors and celebrities often appear on these shows. Since Interstellar has a good amount of famous actors that would appear on these shows, the top results are something that we expect.</p>
 <p>Other top shared roles are Inside “Interstellar”, which is a documentary on how the film was made, so it would make sense that a lot of the actors from Interstellar would appear in the documentary.</p>
 <p>Another film of note is The Dark Knight Rises. This film, along with Interstellar, was directed by Christopher Nolan, and he is know for using some of the same actors in his films. Therefore it is not suprising to see one of his films on this list.</p>
 </section>
@@ -518,7 +537,7 @@ Name: count, Length: 1754, dtype: int64</code></pre>
 <h2 class="anchored" data-anchor-id="second-data-analysis-number-of-roles-per-actor">Second Data Analysis: Number of Roles per Actor</h2>
 <p>For our second data analysis, we can find the number of roles that each actor has been in and then display a bar graph to visualize the data.</p>
 <p>We will count the number of roles and then sort by highest of number of roles. We will use plotly again to produce the graph.</p>
-<div class="cell" data-execution_count="38">
+<div class="cell" data-execution_count="40">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count number of roles and sort by highest number</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>roles_count <span class="op">=</span> df.groupby(<span class="st">'actor'</span>).size().reset_index(name<span class="op">=</span><span class="st">'Number of Roles'</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -530,7 +549,7 @@ Name: count, Length: 1754, dtype: int64</code></pre>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<iframe scrolling="no" width="100%" height="545px" src="iframe_figures/figure_38.html" frameborder="0" allowfullscreen=""></iframe>
+<iframe scrolling="no" width="100%" height="545px" src="iframe_figures/figure_40.html" frameborder="0" allowfullscreen=""></iframe>
 </div>
 </div>
 <p>We can see that the interactive bar graph is displayed. The results are also what we expected. The actor with (by far) the highest number of roles is Michael Caine, with 224 roles. This is not suprising as Michael Caine is one of the oldest actors and has had a very long career in the film industry.</p>
@@ -541,6 +560,7 @@ Name: count, Length: 1754, dtype: int64</code></pre>
 <p>Thank you for reading my blog post! I hope that you were able to learn more about web scrapping as well as how to display scrapped data.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
