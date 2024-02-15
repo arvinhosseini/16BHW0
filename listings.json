@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/Flask Web Dev/index.html",
       "/posts/Movie Web Scrapping/index.html",
       "/posts/Country Temps Visualization/index.html",
       "/posts/Tutorial/index.html",
