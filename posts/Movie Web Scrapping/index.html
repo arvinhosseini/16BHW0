@@ -217,9 +217,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Next, we need to define our parse function, which will take our spider web scrapper to the cast and crew section of our movie.</p>
 <div class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse(<span class="va">self</span>, response):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Navigate to the Full Cast &amp; Crew page</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   full_credits_url <span class="op">=</span> response.url <span class="op">+</span> <span class="st">'/cast/'</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="cf">yield</span> scrapy.Request(full_credits_url , callback<span class="op">=</span><span class="va">self</span>.parse_full_credits)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="co">"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">   Parses the response from the main page of a movie on www.themoviedb.org.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">   Assumptions:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">   - Assumes that the response is from the main page of a movie on www.themoviedb.org.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">   Effects:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">   - Navigates to the Full Cast &amp; Crew page of the movie.</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">   - Yields a scrapy.Request to parse the full credits page of the movie.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">   Args:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">      response: The response object containing the main page's HTML.</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">   Yields:</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">      scrapy.Request: A request to parse the full credits page of the movie.</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">   """</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Navigate to the Full Cast &amp; Crew page</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>   full_credits_url <span class="op">=</span> response.url <span class="op">+</span> <span class="st">'/cast/'</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>   <span class="cf">yield</span> scrapy.Request(full_credits_url , callback<span class="op">=</span><span class="va">self</span>.parse_full_credits)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>On themoviedb webstite, once we are on our movie’s website (i.e.&nbsp;https://www.themoviedb.org/movie/157336-interstellar), if we click on the Full Cast and Crew button we are redirected to the cast page with the following URL: https://www.themoviedb.org/movie/157336-interstellar/cast. As we can see, the only difference between this URL and the previous is the added /cast at the end. Therefore, we will yeid the same URL as before and make sure to add the /cast/ the URL, so that we are now navigated to the Full Cast and Crew page.</p>
 </section>
@@ -228,11 +244,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Next we will implement the parse_full_credits function of our spider class. The goal of this function will be to retrieve all the actor links for the actors in our movie. On the movie database website, each actor has their own page which lists information about thier bio, acting credits, and more. For example, the lead actor in Interstellar has the following page on TMDB: https://www.themoviedb.org/person/10297-matthew-mcconaughey. Here is the implementation of the parse_full_credits method:</p>
 <div class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_full_credits(<span class="va">self</span>, response):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract actor links and yield requests for each actor's page</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        actor_links <span class="op">=</span> response.css(<span class="st">'div.info &gt; p &gt; a::attr(href)'</span>).getall()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">        Parses the full credits page of a movie on www.themoviedb.org to retrieve actor links.</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> actor_link <span class="kw">in</span> actor_links:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> scrapy.Request(get_scrapeops_url(<span class="st">"https://www.themoviedb.org"</span> <span class="op">+</span> actor_link), callback<span class="op">=</span><span class="va">self</span>.parse_actor_page)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">        Assumptions:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">        - Assumes that the response is from the full credits page of a movie on www.themoviedb.org.</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">        Effects:</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">        - Extracts actor links from the page.</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">        - Yields scrapy.Requests to parse each actor's page.</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">            response: The response object containing the full credits page's HTML.</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Yields:</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">            scrapy.Request: Requests to parse each actor's page.</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract actor links and yield requests for each actor's page</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        actor_links <span class="op">=</span> response.css(<span class="st">'div.info &gt; p &gt; a::attr(href)'</span>).getall()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> actor_link <span class="kw">in</span> actor_links:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> scrapy.Request(get_scrapeops_url(<span class="st">"https://www.themoviedb.org"</span> <span class="op">+</span> actor_link), callback<span class="op">=</span><span class="va">self</span>.parse_actor_page)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If we look at few of the pages on TMDB website, we notice that every acting page had the same starting URL: https://www.themoviedb.org. Therefore, we need to find what follows this URL, which we call actor_link, then add it to the starting URL, which will give the full URL for the acting page.</p>
 <p>By going on the initial movie’s website and using the developer’s tools, I was able to find that link to every actor in the movie was listed in there. By following the path from div.info to p to a::attr(href), we are able to extract the second half the URL that we need.</p>
@@ -243,38 +274,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Finally, we need to implement our final function, the parse_actor_page function. The goal of this function to go through each of the actor’s page and extract all the movies and TV shows that they have appeared in. We will then yield the name of the actor and the list of movies and TV shows.</p>
 <p>Let’s first go over how to extract the name of the actor. The beggining of the parse_actor_page looks like this:</p>
 <div class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_actor_page(<span class="va">self</span>, response):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract actor name and movies/TV shows they have worked in</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> response.css(<span class="st">'head &gt; title::text'</span>).get()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract only the part before the hyphen</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> actor_name.split(<span class="st">'—'</span>)[<span class="dv">0</span>].strip()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_actor_page(<span class="va">self</span>, response):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">        Parses an actor's page on www.themoviedb.org to retrieve their name and movie/TV show credits.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Assumptions:</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">        - Assumes that the response is from an actor's page on www.themoviedb.org.</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Effects:</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">        - Extracts the actor's name and their movie/TV show credits.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">        - Yields the actor's name and their credited movie/TV show.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">            response: The response object containing the actor's page's HTML.</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">        Yields:</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">            dict: A dictionary containing the actor's name and their credited movie/TV show.</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract actor name and movies/TV shows they have worked in</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> response.css(<span class="st">'head &gt; title::text'</span>).get()</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract only the part before the hyphen</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> actor_name.split(<span class="st">'—'</span>)[<span class="dv">0</span>].strip()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using the developer’s tools again, I was able to see that every actor’s page had their name listed in the source code under, first under the head section, then under the title section. Therefore, the selector response.css(‘head &gt; title::text’).get(), would retrieve the title of the webpage. However, this response includes the title of the website. So for example, for Matthew McConaughey, the selector would give the following response: “Matthew McConaughey — The Movie Database (TMDB)”. Therefore we need to cut off everything from the long dash,‘—’, and onwards. By using the split function with ‘—’ and selecting the first half the split, [0], we are able to isolate the name of the actor. We will store this value in the variable actor_name.</p>
 <p>Next, we need to implement the second half the function that will extract the movie and TV names for every actor. Here is the full implementation of the parse_actor_page function, with the second half of the function:</p>
 <div class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_actor_page(<span class="va">self</span>, response):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract actor name and movies/TV shows they have worked in</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> response.css(<span class="st">'head &gt; title::text'</span>).get()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">        Parses an actor's page on www.themoviedb.org to retrieve their name and movie/TV show credits.</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract only the part before the hyphen</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> actor_name.split(<span class="st">'—'</span>)[<span class="dv">0</span>].strip()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">        Assumptions:</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">        - Assumes that the response is from an actor's page on www.themoviedb.org.</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>       <span class="co"># Find the index of 'Acting' in the list of credits</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        acting_index <span class="op">=</span> response.xpath(<span class="st">'//div[@class="credits_list"]/h3/text()'</span>).getall().index(<span class="st">'Acting'</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Select the element corresponding to 'Acting' and its associated table</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        acting_only <span class="op">=</span> response.xpath(<span class="ss">f'(//div[@class="credits_list"]/table[@class="card credits"])[</span><span class="sc">{</span>acting_index <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">]'</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract movie or TV names from the selected table</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        movie_or_TV_name <span class="op">=</span> acting_only.xpath(<span class="st">'.//a[@class="tooltip"]/bdi/text()'</span>).getall()</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> movie_or_TV_name <span class="kw">in</span> movie_or_TV_name:</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> {</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                <span class="st">"actor"</span>:actor_name,</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">"movie_or_TV_name"</span>: movie_or_TV_name</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">        Effects:</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">        - Extracts the actor's name and their movie/TV show credits.</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">        - Yields the actor's name and their credited movie/TV show.</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">            response: The response object containing the actor's page's HTML.</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Yields:</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">            dict: A dictionary containing the actor's name and their credited movie/TV show.</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract actor name and movies/TV shows they have worked in</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> response.css(<span class="st">'head &gt; title::text'</span>).get()</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract only the part before the hyphen</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        actor_name <span class="op">=</span> actor_name.split(<span class="st">'—'</span>)[<span class="dv">0</span>].strip()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>       <span class="co"># Find the index of 'Acting' in the list of credits</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        acting_index <span class="op">=</span> response.xpath(<span class="st">'//div[@class="credits_list"]/h3/text()'</span>).getall().index(<span class="st">'Acting'</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Select the element corresponding to 'Acting' and its associated table</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        acting_only <span class="op">=</span> response.xpath(<span class="ss">f'(//div[@class="credits_list"]/table[@class="card credits"])[</span><span class="sc">{</span>acting_index <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">]'</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract movie or TV names from the selected table</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        movie_or_TV_name <span class="op">=</span> acting_only.xpath(<span class="st">'.//a[@class="tooltip"]/bdi/text()'</span>).getall()</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> movie_or_TV_name <span class="kw">in</span> movie_or_TV_name:</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> {</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>                <span class="st">"actor"</span>:actor_name,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">"movie_or_TV_name"</span>: movie_or_TV_name</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>            }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This part was a bit tricky as we want to make sure that we only select movies and TV shows in which the person’s page that we are personing were credited in an acting role, as some also have production and other credits that we do not want included in the list.</p>
 <p>In order to do this we must take advantage of the indexing in source code that will allow us to select only the acting roles. After looking an the source code on the page, we can see that all the acting roles for an actor had a line in common before listing all acting roles:</p>
