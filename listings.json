@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/Image Classification/index.html",
       "/posts/Heat Diffusion/index.html",
       "/posts/Flask Web Dev/index.html",
       "/posts/Movie Web Scrapping/index.html",
